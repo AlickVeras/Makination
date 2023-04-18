@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Golden Vids</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Include custom CSS -->
+    <style>
+      body {
+        background-color: #f9f9f9;
+      }
+      .jumbotron {
+        background-color: #f8c129;
+        color: #000000;
+        margin-bottom: 0;
+      }
+      .form-group {
+        margin-bottom: 2rem;
+      }
+      .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+      #video-output {
+        margin-top: 2rem;
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Você pensa, a máquina faz!</h1>
+        <p class="lead">Golden Era Video Makinator</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <form>
+                <div class="form-group">
+                  <label for="text-input">Em que vídeo você pensou?</label>
+                  <input type="text" class="form-control" id="text-input" placeholder="Tocalopau...">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" onclick="generateVideo()">Maquinar Vídeo</button>
+              </form>
+            </div>
+          </div>
+          <div class="mt-4">
+            <video id="video-output" controls></video>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+      function generateVideo() {
+        const text = document.getElementById("text-input").value;
+        fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer INSERT_YOUR_API_KEY_HERE'
+          },
+          body: JSON.stringify({
+            "model": "image-alpha-001",
+            "prompt": text,
+            "num_images": 1,
+            "size": "512x512",
+            "response_format": "url"
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          const videoOutput = document.getElementById("video-output");
+          videoOutput.src = data.data[0].url;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      }
+    </script>
+  </body>
+</html>
